@@ -49,7 +49,7 @@ $(document).ready(function () {
       }
     });
     if (matches > 0) {
-      $.ajax("https://api.jsonbin.io/b/5e9c6515435f5604bb447261/latest", {
+      $.ajax("https://api.jsonbin.io/b/5e9cb7535fa47104cea38516/latest", {
         method: "GET",
         contentType: "application/json",
         headers: {
@@ -58,9 +58,10 @@ $(document).ready(function () {
         },
       })
         .done(function (data) {
+          result.date_time = new Date().getTime();
           data.records = data.records || [];
           data.records.push(result);
-          $.ajax("https://api.jsonbin.io/b/5e9c6515435f5604bb447261", {
+          $.ajax("https://api.jsonbin.io/b/5e9cb7535fa47104cea38516", {
             method: "PUT",
             contentType: "application/json",
             headers: {
@@ -75,7 +76,7 @@ $(document).ready(function () {
                 "snackbar_success",
                 "Record successfully processed and saved into database."
               );
-              $form.reset();
+              $form[0].reset();
             })
             .fail(function () {
               $loader.addClass("hidden");
@@ -100,17 +101,4 @@ $(document).ready(function () {
       );
     }
   });
-  /* fetch("https://api.jsonbin.io/b/5e9c6515435f5604bb447261/latest", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "secret-key": SECRET_KEY,
-      "versioning": false
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      alert("success");
-      console.log({ data });
-    }); */
 });

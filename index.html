@@ -38,9 +38,26 @@
         </nav>
     </header>
     <div class="container">
-        <canvas id="pollution_graph">
-            No Records Found in database.
-        </canvas>
+        <div class="row">
+            <div class="left-side col-md-10">
+                <canvas id="pollution_graph">
+                    No Records Found in database.
+                </canvas>
+            </div>
+            <div class="right-side col-md-2">
+                Limits
+                <br />
+                <div id="limits">
+                </div>
+                <br/>
+                <div class="info">
+                    <span class="tile-color"></span>
+                    Data points mark in this color are exceeding its set limit.
+                </div>
+                <a id="download_jpg" class='download-btn btn btn-secondary' href='#' download='pollution_metrics.jpg'>Download as JPEG</a>
+                <a id="download_csv" class='download-btn btn btn-secondary' href='#' download='pollution_metrics.csv'>Download as CSV</a>
+            </div>
+        </div>
     </div>
     <div id="loader">
         <div class="spinner-border" role="status">

@@ -1,96 +1,147 @@
 .navbar-brand {
-    text-shadow: 0 1px 3px #000;
+  text-shadow: 0 1px 3px #000;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+.right-side {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.limit-tile {
+  font-weight: normal;
+}
+
+span.tile-color {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.gap-top {
+  margin-top: 14px;
+}
+
+.info {
+  font-size: 12px;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.info .tile-color {
+  background-color: #ee1111;
+  vertical-align: middle;
+}
+
+.tile-title {
+  text-transform: capitalize;
+}
+
+.download-btn {
+  font-size: 12px;
+  margin-top: 12px;
 }
 
 #loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 88vh;
-    width: 100vw;
-    position: fixed;
-    top: 56px;
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  align-items: center;
+  height: 88vh;
+  width: 100vw;
+  position: fixed;
+  top: 56px;
 }
 
 #loader.hidden {
-    display: none;
+  display: none;
 }
 
 #upload-form {
-    margin: 50px 0;
+  margin: 50px 0;
 }
 
 .snackbar {
-    visibility: hidden;
-    min-width: 250px;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
-    padding: 16px;
-    position: fixed;
-    z-index: 1;
-    bottom: 30px;
-    position: fixed;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
+  visibility: hidden;
+  min-width: 250px;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  bottom: 30px;
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
 }
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
 .snackbar.show {
-    visibility: visible;
-    /* Show the snackbar */
-    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
     However, delay the fade out process for 2.5 seconds */
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
 /* Animations to fade the snackbar in and out */
 @-webkit-keyframes fadein {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
 
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
 }
 
 @keyframes fadein {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
 
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes fadeout {
-    from {
-        bottom: 30px;
-        opacity: 1;
-    }
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
 
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }
 
 @keyframes fadeout {
-    from {
-        bottom: 30px;
-        opacity: 1;
-    }
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
 
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+.hidden {
+  display: none;
 }

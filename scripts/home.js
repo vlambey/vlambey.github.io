@@ -5,14 +5,14 @@
     "$2b$10$IVsmO5SflTOEYtIhLabWae9dioa7Ue3lf69hE2X6Of4DV2akGHXOe";
   var keywords = [
     { key: "date_time", unit: "" },
-    { key: "temperature", unit: "°C" },
-    { key: "humidity", unit: "μg/m³" },
-    { key: "smoke", unit: "mg/m³" },
-    { key: "nox", unit: "μg/m³" },
-    { key: "co", unit: "mg/m³" },
-    { key: "methane", unit: "mg/m³" },
-    { key: "co2", unit: "g/m³" },
-    { key: "dust", unit: "μg/m³" },
+    { key: "temperature", unit: "°C", limit: 30 },
+    { key: "humidity", unit: "μg/m³", limit: 60 },
+    { key: "smoke", unit: "mg/m³", limit: 0.4 },
+    { key: "nox", unit: "μg/m³", limit: 0.5 },
+    { key: "co", unit: "mg/m³", limit: 0.8 },
+    { key: "methane", unit: "mg/m³", limit: 0.5 },
+    { key: "co2", unit: "g/m³", limit: 0.5 },
+    { key: "dust", unit: "μg/m³", limit: 100 },
     { key: "lat", unit: "" },
     { key: "long", unit: "" },
   ];
@@ -39,7 +39,7 @@
     return strTime;
   }
 
-  Date.prototype.toShortFormat = function () {
+  Date.prototype.toShortFormat = function (withoutComma) {
     var month_names = [
       "Jan",
       "Feb",
@@ -63,23 +63,39 @@
       month_names[month_index] +
       " " +
       day +
-      ", " +
+      (withoutComma ? " " : ", ") +
       year +
       " " +
       formatAMPM(this)
     );
   };
 
+  function setSubIndexValue(arr, index, subIndex, value) {
+    if (!arr) {
+      return;
+    }
+
+    if (arr[index]) {
+      arr[index][subIndex] = value;
+    } else {
+      arr[index] = [];
+      arr[index][subIndex] = value;
+    }
+  }
+
+  var $limit = $("#limits");
   function prepareDatasetsForChart(records, colorNames) {
     if (!records || !Array.isArray(records)) {
       return;
     }
-    var datasets = [];
+    $limit.empty();
     var labels = [];
     var labelWiseData = {};
+    var completeKeywordDetails = {};
     records.forEach(function (record) {
       labels.push(new Date(record["date_time"]).toShortFormat());
-      keywords.forEach(function (keyword) {
+      keywords.forEach(function (keyword, i) {
+        var value = record[keyword.key] || "0";
         if (
           !(
             keyword.key === "date_time" ||
@@ -87,15 +103,35 @@
             keyword.key === "long"
           )
         ) {
-          const value = record[keyword.key] || "0";
           if (labelWiseData.hasOwnProperty(keyword.key)) {
             labelWiseData[keyword.key].push(value);
           } else {
             labelWiseData[keyword.key] = [value];
           }
         }
+        if (keyword.key === "date_time") {
+          value = new Date(value).toShortFormat(true);
+        }
+        if (completeKeywordDetails.hasOwnProperty(keyword.key)) {
+          completeKeywordDetails[keyword.key].push(value);
+        } else {
+          completeKeywordDetails[keyword.key] = [value];
+        }
       });
     });
+
+    var csvData = [];
+    Object.keys(completeKeywordDetails).forEach(function (label, i) {
+      setSubIndexValue(csvData, 0, i, label);
+      completeKeywordDetails[label].forEach(function (value, j) {
+        setSubIndexValue(csvData, j + 1, i, value);
+      });
+    });
+    csvData.forEach(function (individual, i) {
+      csvData[i] = individual.join(",");
+    });
+    var csvContent = "data:text/csv;charset=utf-8," + csvData.join("\n");
+    $("#download_csv").attr("href", encodeURI(csvContent));
 
     var datasets = [];
     keywords.forEach(function (keyword, i) {
@@ -107,14 +143,35 @@
         )
       ) {
         var colorName = colorNames[i - (1 % colorNames.length)];
+        $limit.append(
+          "<div class='limit-tile'><span class='tile-color' style='background-color:" +
+            colorName +
+            "'></span><span class='tile-title'>" +
+            keyword.key +
+            "</span> = <span class='tile-limit'>" +
+            keyword.limit +
+            "</span></div>"
+        );
         datasets.push({
+          limit: keyword.limit,
           label: keyword.key + " (in " + keyword.unit + ")",
-          backgroundColor: colorName,
+          backgroundColor: [],
           borderColor: colorName,
           data: labelWiseData[keyword.key],
           fill: false,
+          borderWidth: 0.8,
         });
       }
+    });
+
+    datasets.forEach(function (dataset) {
+      dataset.data.forEach(function (value) {
+        var color = dataset.borderColor;
+        if (dataset.limit && value > dataset.limit) {
+          color = "#ee1111";
+        }
+        dataset.backgroundColor.push(color);
+      });
     });
 
     return { datasets: datasets, labels: labels };
@@ -123,13 +180,14 @@
   $(document).ready(function () {
     var $loader = $("#loader");
     const colorNames = [
-      "rgba(255, 99, 132, 0.2)",
-      "rgba(54, 162, 235, 0.2)",
-      "rgba(255, 206, 86, 0.2)",
-      "rgba(75, 192, 192, 0.2)",
-      "rgba(153, 102, 255, 0.2)",
-      "rgba(255, 159, 64, 0.2)",
-      "rgb(0, 0, 0)",
+      "rgb(237, 184, 121)",
+      "rgb(25, 121, 169)",
+      "rgb(224, 123, 57)",
+      "rgb(105, 189, 210)",
+      "#4a00b3",
+      "rgb(204, 231, 232)",
+      "rgb(4, 47, 102)",
+      "rgb(127, 126, 126)",
     ];
     const $canvas = $("#pollution_graph");
     const ctx = $canvas[0].getContext("2d");
@@ -162,7 +220,10 @@
             responsive: true,
             title: {
               display: true,
-              text: "Pollution Graph Records",
+              text: "Pollution Metrics",
+            },
+            legend: {
+              position: "bottom",
             },
             tooltips: {
               mode: "index",
@@ -170,7 +231,6 @@
             },
             hover: {
               mode: "nearest",
-              intersect: true,
             },
             scales: {
               xAxes: [
@@ -202,5 +262,10 @@
           "Some error occrured, Please try again later"
         );
       });
+  });
+  $("#download_jpg").on("click", function (e) {
+    e.target.href = document
+      .getElementById("pollution_graph")
+      .toDataURL("image/jpg");
   });
 })(jQuery);
